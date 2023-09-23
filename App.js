@@ -1,15 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
-import { Text, View, Platform, TouchableOpacity, SafeAreaView, TextInput, StyleSheet } from 'react-native';
+import { Text, View, Platform, TouchableOpacity, SafeAreaView, TextInput, StyleSheet, Image } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { firebase } from "./firebaseConfig"
 import * as Linking from 'expo-linking';
-import ButtonContainer from './ButtonContainer';
+import ButtonContainer from './components/ButtonContainer';
+import * as Haptics from "expo-haptics"
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
+    shouldPlaySound: true,
     shouldSetBadge: false,
   }),
 });
@@ -19,7 +20,7 @@ export default function App() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [name, setName] = useState("");
-  const [tokenToSend, setTokenToSend] = useState("");
+  const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
   const ref = firebase.firestore().collection("tokens")
@@ -37,8 +38,33 @@ export default function App() {
       alert("Write something")
     } else {
       await schedulePushNotification((expoPushToken === "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]")? "ExponentPushToken[4JdT3eHCYaHdzcTzqAt1ql]" : "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]" , body, title, "default");
+      Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Success
+      )
     }
-    
+  }
+
+  const saveNotification = () => {
+    ref.where("owner", "==", name).get().then((querySnaphot) => {
+      querySnaphot.forEach(doc => {
+        const notificationToAdd = {
+          "title": title,
+          "body": body
+        }
+        const userId = doc.id
+        const savedNotifications = doc.data().savedNotifications || [];
+        savedNotifications.push(notificationToAdd);
+        ref.doc(userId).update({
+            savedNotifications: savedNotifications,
+          })
+          .then(() => {
+            console.log('Document successfully updated');
+          })
+          .catch((error) => {
+            console.error('Error updating document: ', error);
+          });
+      });
+    })
   }
 
   const handleLongPress = async () => {
@@ -46,6 +72,9 @@ export default function App() {
       alert("Write something")
     } else {
       await schedulePushNotification((expoPushToken === "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]")? "ExponentPushToken[4JdT3eHCYaHdzcTzqAt1ql]" : "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]", body, title, "longpress");
+      Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Success
+      )
     }
   }
   
@@ -57,6 +86,10 @@ export default function App() {
     
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
       console.log(response);
+    });
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
     });
 
     Notifications.addNotificationResponseReceivedListener(response => {
@@ -80,18 +113,25 @@ export default function App() {
           <Text style={styles.welcomeText}>Hello {name}!!!</Text>
           <Text style={{paddingBottom: 6, fontSize: 16}}>Send a custom notification:</Text>
           <View style={styles.notificationProp}>
-            <Text style={styles.notificationAppText}>lovification</Text>
+            <View style={[styles.row, {paddingLeft: 20}]}>
+              <Image style={{width: 26, height: 26}} source={require('./assets/icon.png')} />
+              <Text style={styles.notificationAppText}>lovification</Text>
+            </View>
             <TextInput placeholder={"Type your title here"} placeholderTextColor={"black"} style={styles.titleTextInp}value={title} onChangeText={setTitle} />
             <TextInput placeholder={"Type your message here"} placeholderTextColor={"black"} style={styles.bodyTextInp}value={body} onChangeText={setBody} />
           </View>
-          <TouchableOpacity 
-          onPress={handlePress}
-          onLongPress={handleLongPress}
-          style={styles.sendButton}>
-            <Text style={{fontSize: 18, fontWeight: "bold"}}>I Miss You.. :(</Text>
-          </TouchableOpacity>
+          <View style={[styles.row, {justifyContent: "space-evenly"}]}>
+            <TouchableOpacity 
+            onPress={handlePress}
+            onLongPress={handleLongPress}
+            style={styles.sendButton}>
+              <Text style={{fontSize: 18, fontWeight: "bold"}}>I Miss You.. :(</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={saveNotification} style={[styles.sendButton, {backgroundColor: "yellow"}]}>
+              <Text style={{fontSize: 18, fontWeight: "bold"}}>Save</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        
         <View style={styles.secondContainer}>
           <Text style={{paddingBottom: 6, fontSize: 16}}>Or use one of the presets: </Text>
           <ButtonContainer name={name} updateTitle={updateTitle} updateBody={updateBody}></ButtonContainer>
@@ -113,6 +153,10 @@ async function schedulePushNotification(targetToken, body, title, channelId) {
         title: title,
         body: body,
         channelId: channelId,
+
+        data: {
+          backgroundColor: "red"
+        },
       }),
       headers: {
         'Content-Type': 'application/json',
@@ -203,7 +247,7 @@ const styles = StyleSheet.create({
     color: "black",
   },
   notificationAppText: {
-    paddingLeft: 20,
+    paddingLeft: 10,
     color: "#bababa"
   },
   titleTextInp: {
@@ -228,5 +272,9 @@ const styles = StyleSheet.create({
     width: "100%",
     borderColor: "#eaeaea",
     borderRadius: 15,
-  }
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
 })
