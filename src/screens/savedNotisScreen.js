@@ -52,7 +52,6 @@ export default function SavedNotisScreen({route}) {
             });
     
             setSavedNotifications(notificationsData);
-            console.log(savedNotifications)
             setIsLoading(false)
           })
           .catch((error) => {
@@ -61,7 +60,7 @@ export default function SavedNotisScreen({route}) {
           });
       }, []);
 
-    return (isLoading) ? (<Text>Loading...</Text>):(
+    return (isLoading) ? (<Text>Loading...</Text>):( 
         <FlatList 
             data={savedNotifications}
             renderItem={({item}) => <SavedNotificationItem title={item.title} body={item.body}/>}

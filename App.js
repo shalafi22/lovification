@@ -41,6 +41,7 @@ export default function App() {
         const token = await registerForPushNotificationsAsync();
         setExpoPushToken(token);
         setName(token === "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]" ? "bubu" : "bibi");
+        setIsLoading(false)
       } catch (error) {
         console.error('Error fetching data:', error);
         setIsLoading(false);
