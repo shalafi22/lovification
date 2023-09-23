@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "206445086162",
+    "project_id": "lovification-2521b",
+    "storage_bucket": "lovification-2521b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:206445086162:android:48b00d47caef635f39f40b",
+        "android_client_info": {
+          "package_name": "com.kemalm.lovification"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "206445086162-v3hp5cnfh17van65e4e9l5lo47qj6s0j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJiQmYLXC-FDf7TYxR3yDeCQ35mnablJo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "206445086162-v3hp5cnfh17van65e4e9l5lo47qj6s0j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
