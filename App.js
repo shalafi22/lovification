@@ -1,11 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
-import { Text, View, Platform, TouchableOpacity, SafeAreaView, TextInput, StyleSheet, Image } from 'react-native';
+import { Platform, Text } from "react-native"
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
-import { firebase } from "./firebaseConfig"
+import { useState, useEffect, useRef } from 'react';
 import * as Linking from 'expo-linking';
-import ButtonContainer from './components/ButtonContainer';
-import * as Haptics from "expo-haptics"
+import SendNotiScreen from './src/screens/sendNotiScreen';
+import SavedNotisScreen from "./src/screens/savedNotisScreen";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from "@react-navigation/native";
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { firebase } from "./firebaseConfig";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -15,74 +19,35 @@ Notifications.setNotificationHandler({
   }),
 });
 
+const Tab = createBottomTabNavigator();
+
 export default function App() {
   const [expoPushToken, setExpoPushToken] = useState('');
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
   const [name, setName] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [savedNotifications, setSavedNotifications] = useState([])
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
+
+  
   const ref = firebase.firestore().collection("tokens")
 
-  const updateTitle = (newTitle) => {
-    setTitle(newTitle)
-  }
-
-  const updateBody = (newBody) => {
-    setBody(newBody)
-  }
-
-  const handlePress = async () => {
-    if (title === "" || body === "") {
-      alert("Write something")
-    } else {
-      await schedulePushNotification((expoPushToken === "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]")? "ExponentPushToken[4JdT3eHCYaHdzcTzqAt1ql]" : "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]" , body, title, "default");
-      Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Success
-      )
-    }
-  }
-
-  const saveNotification = () => {
-    ref.where("owner", "==", name).get().then((querySnaphot) => {
-      querySnaphot.forEach(doc => {
-        const notificationToAdd = {
-          "title": title,
-          "body": body
-        }
-        const userId = doc.id
-        const savedNotifications = doc.data().savedNotifications || [];
-        savedNotifications.push(notificationToAdd);
-        ref.doc(userId).update({
-            savedNotifications: savedNotifications,
-          })
-          .then(() => {
-            console.log('Document successfully updated');
-          })
-          .catch((error) => {
-            console.error('Error updating document: ', error);
-          });
-      });
-    })
-  }
-
-  const handleLongPress = async () => {
-    if (title === "" || body === "") {
-      alert("Write something")
-    } else {
-      await schedulePushNotification((expoPushToken === "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]")? "ExponentPushToken[4JdT3eHCYaHdzcTzqAt1ql]" : "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]", body, title, "longpress");
-      Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Success
-      )
-    }
-  }
+ 
   
   useEffect(() => {
-    registerForPushNotificationsAsync().then(token => {
-      setExpoPushToken(token)
-      setName((token === "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]")? "bubu": "bibi")
-    });
+    async function fetchData() {
+      try {
+        const token = await registerForPushNotificationsAsync();
+        setExpoPushToken(token);
+        setName(token === "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]" ? "bubu" : "bibi");
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setIsLoading(false);
+      }
+    }
+
+    fetchData();
     
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
       console.log(response);
@@ -106,63 +71,30 @@ export default function App() {
     };
   }, []);
 
-  return (
-    <SafeAreaView style={styles.wrapper}>
-      <View style={styles.container}>
-        <View style={styles.firstContainer}>
-          <Text style={styles.welcomeText}>Hello {name}!!!</Text>
-          <Text style={{paddingBottom: 6, fontSize: 16}}>Send a custom notification:</Text>
-          <View style={styles.notificationProp}>
-            <View style={[styles.row, {paddingLeft: 20}]}>
-              <Image style={{width: 26, height: 26}} source={require('./assets/icon.png')} />
-              <Text style={styles.notificationAppText}>lovification</Text>
-            </View>
-            <TextInput placeholder={"Type your title here"} placeholderTextColor={"black"} style={styles.titleTextInp}value={title} onChangeText={setTitle} />
-            <TextInput placeholder={"Type your message here"} placeholderTextColor={"black"} style={styles.bodyTextInp}value={body} onChangeText={setBody} />
-          </View>
-          <View style={[styles.row, {justifyContent: "space-evenly"}]}>
-            <TouchableOpacity 
-            onPress={handlePress}
-            onLongPress={handleLongPress}
-            style={styles.sendButton}>
-              <Text style={{fontSize: 18, fontWeight: "bold"}}>I Miss You.. :(</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={saveNotification} style={[styles.sendButton, {backgroundColor: "yellow"}]}>
-              <Text style={{fontSize: 18, fontWeight: "bold"}}>Save</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.secondContainer}>
-          <Text style={{paddingBottom: 6, fontSize: 16}}>Or use one of the presets: </Text>
-          <ButtonContainer name={name} updateTitle={updateTitle} updateBody={updateBody}></ButtonContainer>
-          <TouchableOpacity onPress={handlePress} onLongPress={handleLongPress} style={styles.sendButton}>
-            <Text style={{fontSize: 18, fontWeight: "bold"}}>Send</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </SafeAreaView>
+  return (isLoading)?(<SafeAreaView><Text>Loading...</Text></SafeAreaView>):(
+    <NavigationContainer>
+      <Tab.Navigator 
+        initialRouteName="Send"
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === 'Send') {
+              iconName = focused ? 'mail' : 'mail-outline';
+            } else if (route.name === 'Saved') {
+              iconName = focused ? 'bookmark' : 'bookmark-outline'; 
+            }
+
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+        })}
+      >
+        <Tab.Screen name="Send" component={SendNotiScreen} options={{ title: 'Send Lovifications' }} initialParams={{name: name, expoPushToken: expoPushToken}} />
+        <Tab.Screen name="Saved" options={{ title: 'Saved Lovifications' }} initialParams={{name: name, savedNotifications: savedNotifications}}component={SavedNotisScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
     
   );
-}
-
-async function schedulePushNotification(targetToken, body, title, channelId) {
-  return fetch('https://exp.host/--/api/v2/push/send', {
-      body: JSON.stringify({
-        to: targetToken,
-        sound: (channelId === "longpress") ? "upset_sound_tone.mp3" : "default",
-        title: title,
-        body: body,
-        channelId: channelId,
-
-        data: {
-          backgroundColor: "red"
-        },
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-    });
 }
 
 async function registerForPushNotificationsAsync() {
@@ -203,78 +135,4 @@ async function registerForPushNotificationsAsync() {
   return token;
 }
 
-const styles = StyleSheet.create({
-  firstContainer: {
-    width: "100%",
-    borderBottomWidth: 1,
-    paddingBottom: 40,
-    borderBottomColor: "lightgrey",
-  },
-  secondContainer: {
-    width: "100%",
-    marginTop: 10
-  },
-  sendButton: {
-    alignSelf: "center",
-    backgroundColor: "lightblue",
-    borderRadius: 15,
-    padding: 10,
-    marginTop: 10,
-    elevation: 5
-  },
-  welcomeText: {
-    fontSize: 40,
-    marginBottom: 40,
-    borderBottomWidth: 2
-  },
-  buttonText: {
-    fontSize: 40, 
-    textAlign: "center", 
-    alignItems: "center"
-  },
-  button: {
-    backgroundColor: "red",
-    borderRadius: 150,
-    width: 300,
-    height: 300,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  bodyTextInp: {
-    width: "100%",
-    marginBottom: 8,
-    paddingLeft: 20,
-    color: "black",
-  },
-  notificationAppText: {
-    paddingLeft: 10,
-    color: "#bababa"
-  },
-  titleTextInp: {
-    marginVertical: 5,
-    paddingLeft: 20,
-    color: "black",
-    fontSize: 18,
-  },
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: "center"
-  },
-  wrapper: {
-    flexDirection: "column", 
-    justifyContent:"center", 
-    flex: 1,
-    padding: 10,
-  },
-  notificationProp: {
-    borderWidth: 2,
-    width: "100%",
-    borderColor: "#eaeaea",
-    borderRadius: 15,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center"
-  },
-})
+
