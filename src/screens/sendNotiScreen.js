@@ -9,6 +9,8 @@ export default function SendNotiScreen({route}) {
     const [title, setTitle] = useState("");
     const [body, setBody] = useState("");
     const [showNotification, setShowNotification] = useState(false);
+    const [message, setMessage] = useState("Notification saved successfully!!")
+
     const ref = firebase.firestore().collection("tokens")
     const updateTitle = (newTitle) => {
         setTitle(newTitle)
@@ -38,21 +40,36 @@ export default function SendNotiScreen({route}) {
             }
             const userId = doc.id
             const savedNotifications = doc.data().savedNotifications || [];
-            savedNotifications.push(notificationToAdd);
-            ref.doc(userId).update({
-                savedNotifications: savedNotifications,
-                })
-                .then(() => {
-                console.log('Document successfully updated');
-                })
-                .catch((error) => {
-                console.error('Error updating document: ', error);
-                });
+            if (savedNotifications.some((obj) => {
+              return obj.title === title && obj.body === body;
+            })) {
+              setMessage("That notification already exists!")
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+              setShowNotification(true);
+              setTimeout(() => {
+              setShowNotification(false);
+              }, 3500);
+            }
+            else {
+              savedNotifications.push(notificationToAdd);
+              ref.doc(userId).update({
+                  savedNotifications: savedNotifications,
+                  })
+                  .then(() => {
+                    setMessage("Notification saved successfully!!")
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+                    setShowNotification(true);
+                    setTimeout(() => {
+                    setShowNotification(false);
+                    }, 3500);
+                  })
+                  .catch((error) => {
+                  console.error('Error updating document: ', error);
+                  });
+            }
+            
             });
-            setShowNotification(true);
-            setTimeout(() => {
-            setShowNotification(false);
-            }, 3500);
+           
         })
     }
 
@@ -111,7 +128,7 @@ export default function SendNotiScreen({route}) {
         </View>
       </View>
       {showNotification && (
-        <NotificationPopup message="Notification saved successfully!!" />
+        <NotificationPopup message={message} />
       )}
     </SafeAreaView>
     )

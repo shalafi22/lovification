@@ -32,7 +32,6 @@ export default function App() {
 
   
   const ref = firebase.firestore().collection("tokens")
-
  
   
   useEffect(() => {

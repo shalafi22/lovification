@@ -5,14 +5,15 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 
 const SavedNotificationItem = (props) => {
-    const navigation = useNavigation()
 
     const handlePress = (title, body) => {
-        navigation.navigate('Send', {
+        props.navigation.navigate('Send', {
             title: title,
             body: body,
           })
     }
+
+    
     return (
         <View style={[styles.row, {justifyContent: "space-evenly"}]}>
             <TouchableOpacity onPress={() => {handlePress(props.title, props.body)}} style={styles.notificationProp}>
@@ -25,21 +26,39 @@ const SavedNotificationItem = (props) => {
                     <Text style={styles.bodyTextInp} >{props.body}</Text>
                 </View>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => {props.handleDelete(props.title, props.body)}}>
                 <Ionicons name="trash-bin" size={20} color="red" />
             </TouchableOpacity>
         </View>
     )
 }
 
-export default function SavedNotisScreen({route}) {
+export default function SavedNotisScreen({route, navigation}) {
     const [savedNotifications, setSavedNotifications] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const ref = firebase.firestore().collection("tokens")
 
-    useEffect(() => {
-        const owner = route.params.name;
-        ref.where('owner', '==', owner).get().then((querySnapshot) => {
+    const handleDelete = (title, body) => {
+      const newArray = savedNotifications.filter((obj) => {
+        return !(obj.title === title && obj.body === body);
+      });
+      setSavedNotifications(newArray)
+
+      ref.where("owner", "==", route.params.name).get().then((querySnapshot) => {
+        querySnapshot.forEach(doc => {
+          const userId = doc.id
+          ref.doc(userId).update({
+            savedNotifications: newArray
+          }).then(() => {
+            console.log("Delete successful")
+          }).catch((err) => console.error(`Error deleting doc: ${err}`))
+        });
+      })
+
+    }
+
+    const fetchSaved = (name) => {
+        ref.where('owner', '==', name).get().then((querySnapshot) => {
             const notificationsData = [];
     
             querySnapshot.forEach((doc) => {
@@ -52,18 +71,25 @@ export default function SavedNotisScreen({route}) {
             });
     
             setSavedNotifications(notificationsData);
-            setIsLoading(false)
           })
           .catch((error) => {
             console.error('Error fetching data:', error);
-            setIsLoading(false)
-          });
+          }).finally(() => setIsLoading(false));
+    }
+    useEffect(() => {
+        fetchSaved(route.params.name);
       }, []);
+
+    useEffect(() => {
+      if (route.params?.isNewSaved) {
+        fetchSaved(route.params.name);
+      }
+    }, [route.params])
 
     return (isLoading) ? (<Text>Loading...</Text>):( 
         <FlatList 
             data={savedNotifications}
-            renderItem={({item}) => <SavedNotificationItem title={item.title} body={item.body}/>}
+            renderItem={({item}) => <SavedNotificationItem handleDelete={handleDelete} navigation={navigation} title={item.title} body={item.body}/>}
         />
     )
 }
