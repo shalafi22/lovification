@@ -11,6 +11,7 @@ export default function SendNotiScreen({route}) {
     const [body, setBody] = useState("");
     const [showNotification, setShowNotification] = useState(false);
     const [message, setMessage] = useState("Notification saved successfully!!")
+    const [sentNotificationCount, setSentNotificationCount] = useState(0);
 
     const ref = firebase.firestore().collection("tokens")
     const updateTitle = (newTitle) => {
@@ -25,10 +26,26 @@ export default function SendNotiScreen({route}) {
         if (title === "" || body === "") {
             alert("Write something")
         } else {
-            await schedulePushNotification((route.params.expoPushToken === "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]")? "ExponentPushToken[4JdT3eHCYaHdzcTzqAt1ql]" : "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]" , body, title, "default");
-            Haptics.notificationAsync(
-            Haptics.NotificationFeedbackType.Success
-            )
+            await schedulePushNotification((route.params.expoPushToken === "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]")? "ExponentPushToken[4JdT3eHCYaHdzcTzqAt1ql]" : "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]" , body, title, "default")
+            .then(() => {
+              Haptics.notificationAsync(
+              Haptics.NotificationFeedbackType.Success
+              )
+              ref.where("owner", "==", route.params.name).get().then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  const data = doc.data()
+                  const today = new Date()
+                  const todayString = today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
+                  ref.doc(doc.id).update({
+                    lastSentDate: todayString,
+                    dailySentCount: data.dailySentCount + 1
+                  })
+                })
+              })
+              const tempCount = sentNotificationCount + 1;
+              setSentNotificationCount(tempCount)
+            })
+            
         }
     }
 
@@ -94,6 +111,25 @@ export default function SendNotiScreen({route}) {
       }
     }, [route.params]);
 
+    useEffect(() => {
+      ref.where("owner", "==", route.params.name).get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const data = doc.data()
+          const today = new Date();
+          const todayString = today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
+          if (todayString !== data.lastSentDate) {
+            ref.doc(doc.id).update(
+              {dailySentCount: 0}
+            ).then(() => {
+              setSentNotificationCount(0);
+            }) 
+          } else {
+            setSentNotificationCount(data.dailySentCount)
+          }
+        })
+      })
+    }, [])
+
     return (
         <SafeAreaView style={styles.wrapper}>
       <View style={styles.container}>
@@ -109,16 +145,17 @@ export default function SendNotiScreen({route}) {
             <TextInput placeholder={"Type your message here"} placeholderTextColor={"black"} style={styles.bodyTextInp}value={body} onChangeText={setBody} />
           </View>
           <View style={[styles.row, {justifyContent: "space-evenly"}]}>
+            <TouchableOpacity onPress={saveNotification} style={[styles.sendButton, {backgroundColor: "yellow"}]}>
+              <Text style={{fontSize: 18, fontWeight: "bold"}}>Save</Text>
+            </TouchableOpacity>
             <TouchableOpacity 
             onPress={handlePress}
             onLongPress={handleLongPress}
             style={styles.sendButton}>
-              <Text style={{fontSize: 18, fontWeight: "bold"}}>I Miss You.. :(</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={saveNotification} style={[styles.sendButton, {backgroundColor: "yellow"}]}>
-              <Text style={{fontSize: 18, fontWeight: "bold"}}>Save</Text>
+              <Text style={{fontSize: 18, fontWeight: "bold"}}>Send</Text>
             </TouchableOpacity>
           </View>
+          <Text>You sent {sentNotificationCount} Lovifications today!</Text>
         </View>
         <View style={styles.secondContainer}>
           <Text style={{paddingBottom: 6, fontSize: 16}}>Or use one of the presets: </Text>
