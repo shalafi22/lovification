@@ -52,7 +52,7 @@ export default function SendNotiScreen({route}) {
             setShowNotification(true);
             setTimeout(() => {
             setShowNotification(false);
-            }, 3000);
+            }, 3500);
         })
     }
 
@@ -71,6 +71,8 @@ export default function SendNotiScreen({route}) {
       if (route.params?.title && route.params?.body) {
         setTitle(route.params.title);
         setBody(route.params.body);
+        delete route.params.title;
+        delete route.params.body;
       }
     }, [route.params]);
 
