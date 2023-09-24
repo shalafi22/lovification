@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import * as Haptics from "expo-haptics";
 import NotificationPopup from '../components/NotificationPopup';
 import { firebase } from "../../firebaseConfig";
+import {StatusBar} from "expo-status-bar";
 
 export default function SendNotiScreen({route}) {
     const [title, setTitle] = useState("");
@@ -130,6 +131,10 @@ export default function SendNotiScreen({route}) {
       {showNotification && (
         <NotificationPopup message={message} />
       )}
+      <StatusBar style="dark"
+                       translucent={true}
+                       hidden={false}
+            />
     </SafeAreaView>
     )
 }
