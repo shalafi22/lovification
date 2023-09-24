@@ -1,4 +1,4 @@
-import { Platform, Text } from "react-native"
+import { ActivityIndicator, Platform, Text } from "react-native"
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { useState, useEffect, useRef } from 'react';
@@ -71,7 +71,7 @@ export default function App() {
     };
   }, []);
 
-  return (isLoading)?(<SafeAreaView><Text>Loading...</Text></SafeAreaView>):(
+  return (isLoading)?(<SafeAreaView stlye={{flex: 1, height:"100%", justifyContent: "center", alignItems: "center"}}><ActivityIndicator size="large" color="green" /></SafeAreaView>):(
     <NavigationContainer>
       <Tab.Navigator 
         initialRouteName="Send"

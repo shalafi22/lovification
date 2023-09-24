@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity } from "react-native";
+import { SafeAreaView, ActivityIndicator, StyleSheet, Text, View, Image, FlatList, TouchableOpacity } from "react-native";
 import { firebase } from "../../firebaseConfig";
 import { useState, useEffect } from "react";
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -86,7 +86,7 @@ export default function SavedNotisScreen({route, navigation}) {
       }
     }, [route.params])
 
-    return (isLoading) ? (<Text>Loading...</Text>):( 
+    return (isLoading) ? (<SafeAreaView stlye={{flex: 1, height:"100%", justifyContent: "center", alignItems: "center"}}><ActivityIndicator size="large" color="green" /></SafeAreaView>):( 
         <FlatList 
             data={savedNotifications}
             renderItem={({item}) => <SavedNotificationItem handleDelete={handleDelete} navigation={navigation} title={item.title} body={item.body}/>}

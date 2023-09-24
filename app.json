@@ -18,7 +18,8 @@
       [
         "expo-notifications",
         {
-          "sounds": ["./assets/upset_sound_tone.mp3"]
+          "sounds": ["./assets/upset_sound_tone.mp3"],
+          "color": "#cadadc"
         }
       ]
     ],
