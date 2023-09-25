@@ -12,6 +12,7 @@ export default function SendNotiScreen({route}) {
     const [showNotification, setShowNotification] = useState(false);
     const [message, setMessage] = useState("Notification saved successfully!!")
     const [sentNotificationCount, setSentNotificationCount] = useState(0);
+    const [isSendDisabled, setIsSendDisabled] = useState(false);
 
     const ref = firebase.firestore().collection("tokens")
     const updateTitle = (newTitle) => {
@@ -23,30 +24,41 @@ export default function SendNotiScreen({route}) {
     }
 
     const handlePress = async () => {
+      if (!isSendDisabled) {
         if (title === "" || body === "") {
-            alert("Write something")
-        } else {
-            await schedulePushNotification((route.params.expoPushToken === "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]")? "ExponentPushToken[4JdT3eHCYaHdzcTzqAt1ql]" : "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]" , body, title, "default")
-            .then(() => {
-              Haptics.notificationAsync(
-              Haptics.NotificationFeedbackType.Success
-              )
-              ref.where("owner", "==", route.params.name).get().then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                  const data = doc.data()
-                  const today = new Date()
-                  const todayString = today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
-                  ref.doc(doc.id).update({
-                    lastSentDate: todayString,
-                    dailySentCount: data.dailySentCount + 1
-                  })
+          setMessage("An empty Lovification is no sign of love!")
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+          setShowNotification(true);
+          setTimeout(() => {
+          setShowNotification(false);
+          }, 3500);
+      } else {
+          await schedulePushNotification((route.params.expoPushToken === "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]")? "ExponentPushToken[4JdT3eHCYaHdzcTzqAt1ql]" : "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]" , body, title, "default")
+          .then(() => {
+            Haptics.notificationAsync(
+            Haptics.NotificationFeedbackType.Success
+            )
+            ref.where("owner", "==", route.params.name).get().then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                const data = doc.data()
+                const today = new Date()
+                const todayString = today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
+                ref.doc(doc.id).update({
+                  lastSentDate: todayString,
+                  dailySentCount: data.dailySentCount + 1
                 })
               })
-              const tempCount = sentNotificationCount + 1;
-              setSentNotificationCount(tempCount)
             })
-            
+            const tempCount = sentNotificationCount + 1;
+            setSentNotificationCount(tempCount)
+          }) 
         }
+        setIsSendDisabled(true);
+        setTimeout(() => {
+          setIsSendDisabled(false);
+        }, 500)
+      }
+        
     }
 
     const saveNotification = () => {
@@ -102,6 +114,14 @@ export default function SendNotiScreen({route}) {
     }
     }
 
+    const clearNotification = () => {
+      setBody("")
+      setTitle("")
+      Haptics.notificationAsync(
+      Haptics.NotificationFeedbackType.Warning
+      )
+    }
+
     useEffect(() => {
       if (route.params?.title && route.params?.body) {
         setTitle(route.params.title);
@@ -142,27 +162,28 @@ export default function SendNotiScreen({route}) {
               <Text style={styles.notificationAppText}>lovification</Text>
             </View>
             <TextInput placeholder={"Type your title here"} placeholderTextColor={"black"} style={styles.titleTextInp}value={title} onChangeText={setTitle} />
-            <TextInput placeholder={"Type your message here"} placeholderTextColor={"black"} style={styles.bodyTextInp}value={body} onChangeText={setBody} />
+            <TextInput multiline={true} placeholder={"Type your message here"} placeholderTextColor={"black"} style={styles.bodyTextInp}value={body} onChangeText={setBody} />
           </View>
           <View style={[styles.row, {justifyContent: "space-evenly"}]}>
             <TouchableOpacity onPress={saveNotification} style={[styles.sendButton, {backgroundColor: "yellow"}]}>
               <Text style={{fontSize: 18, fontWeight: "bold"}}>Save</Text>
             </TouchableOpacity>
+            <TouchableOpacity onPress={clearNotification} style={[styles.sendButton, {backgroundColor: "red"}]}>
+              <Text style={{fontSize: 18, fontWeight: "bold"}}>Clear</Text>
+            </TouchableOpacity>
             <TouchableOpacity 
+            disabled={isSendDisabled}
             onPress={handlePress}
             onLongPress={handleLongPress}
             style={styles.sendButton}>
               <Text style={{fontSize: 18, fontWeight: "bold"}}>Send</Text>
             </TouchableOpacity>
           </View>
-          <Text>You sent {sentNotificationCount} Lovifications today!</Text>
+          <Text style={{alignSelf: "center", paddingTop: 10, marginBottom: -20, fontSize: 22, fontWeight: "bold"}}>You sent <Text style={{color: "red"}}>{sentNotificationCount}</Text> Lovification(s) today!</Text>
         </View>
         <View style={styles.secondContainer}>
           <Text style={{paddingBottom: 6, fontSize: 16}}>Or use one of the presets: </Text>
           <ButtonContainer name={route.params.name} updateTitle={updateTitle} updateBody={updateBody}></ButtonContainer>
-          <TouchableOpacity onPress={handlePress} onLongPress={handleLongPress} style={styles.sendButton}>
-            <Text style={{fontSize: 18, fontWeight: "bold"}}>Send</Text>
-          </TouchableOpacity>
         </View>
       </View>
       {showNotification && (
