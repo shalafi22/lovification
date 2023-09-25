@@ -1,48 +1,35 @@
+import { useState, useEffect } from "react"
 import { Text, View, StyleSheet, TouchableOpacity} from "react-native"
 
 const ButtonContainer = (props) => {
-    const presetChangeNoti = (type) => {
-        if (type === "wotur") {
-            props.updateTitle("Su Hatırlatması!!")
-            props.updateBody("Su içtin mi?? Su iç!!")
-        } else if (type === "missed") {
-            props.updateTitle("Özlendin!!")
-            props.updateBody("Gle bura ösledm")
-        } else if (type === "lookie") {
-            props.updateTitle("BAKİM!!")
-            props.updateBody("Kim izin verdi?? Bakim!!")
-        } else if (type === "pingu") {
-            props.updateTitle("Bu ne hal?")
-            props.updateBody("Pingu Musun??")
-        } else if (type === "attention") {
-            props.updateTitle("ÖLCEMM")
-            props.updateBody("Biraz daha ilgi görmezsem ölcem...")
-        }
+    const [buttons, setButtons] = useState([{"title": "", "body": "", "color": "grey", "name": "XXX"},{"title": "", "body": "", "color": "grey", "name": "XXX"},{"title": "", "body": "", "color": "grey", "name": "XXX"},{"title": "", "body": "", "color": "grey", "name": "XXX"}])
+
+
+    const presetChangeNoti = (title, body) => {
+        props.updateTitle(title)
+        props.updateBody(body)
     }
+
+    useEffect(() => {
+        let buttonsTemp = [...props.presets]
+        while (buttonsTemp.length < 4) {
+            buttonsTemp.push({"title": "", "body": "", "color": "grey", "name": "XXX"})
+        }
+        setButtons(buttonsTemp)
+    }, [])
+
+
     return (
-        (props.name ==="bibi" ? (
             <View style={styles.container}>
                 <View style={styles.row}>
-                    <TouchableOpacity onPress={() => {presetChangeNoti("attention")}} style={[styles.button,{backgroundColor: "crimson"}]}><Text style={styles.buttonText}>ACİL İLGİ</Text></TouchableOpacity>
-                    <TouchableOpacity onPress={() => {presetChangeNoti("missed")}} style={[styles.button,{backgroundColor: "aqua"}]}><Text style={styles.buttonText}>Ösledimmm</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => {presetChangeNoti(buttons[0].title, buttons[0].body)}} style={[styles.button,{backgroundColor: buttons[0].color}]}><Text style={styles.buttonText}>{buttons[0].name}</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => {presetChangeNoti(buttons[1].title, buttons[1].body)}} style={[styles.button,{backgroundColor: buttons[1].color}]}><Text style={styles.buttonText}>{buttons[1].name}</Text></TouchableOpacity>
                 </View>
                 <View style={styles.row}>
-                    <TouchableOpacity onPress={() => {presetChangeNoti("lookie")}} style={[styles.button,{backgroundColor: "lightgoldenrodyellow"}]}><Text style={styles.buttonText}>Bakim</Text></TouchableOpacity>
-                    <TouchableOpacity onPress={() => {presetChangeNoti("pingu")}} style={[styles.button,{backgroundColor: "slategray"}]}><Text style={styles.buttonText}>Pingu Musun?</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => {presetChangeNoti(buttons[2].title, buttons[2].body)}} style={[styles.button,{backgroundColor: buttons[2].color}]}><Text style={styles.buttonText}>{buttons[2].name}</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => {presetChangeNoti(buttons[3].title, buttons[3].body)}} style={[styles.button,{backgroundColor: buttons[3].color}]}><Text style={styles.buttonText}>{buttons[3].name}</Text></TouchableOpacity>
                 </View>
-            </View>
-        ) : (
-            <View style={styles.container}>
-                <View style={styles.row}>
-                    <TouchableOpacity onPress={() => {presetChangeNoti("wotur")}} style={[styles.button,{backgroundColor: "aqua"}]}><Text style={styles.buttonText}>Wotur İç</Text></TouchableOpacity>
-                    <TouchableOpacity onPress={() => {presetChangeNoti("missed")}} style={[styles.button,{backgroundColor: "crimson"}]}><Text style={styles.buttonText}>Ösledimmm</Text></TouchableOpacity>
-                </View>
-                <View style={styles.row}>
-                    <TouchableOpacity onPress={() => {presetChangeNoti("lookie")}} style={[styles.button,{backgroundColor: "lightgoldenrodyellow"}]}><Text style={styles.buttonText}>Bakim</Text></TouchableOpacity>
-                    <TouchableOpacity onPress={() => {presetChangeNoti("pingu")}} style={[styles.button,{backgroundColor: "slategray"}]}><Text style={styles.buttonText}>Pingu Musun?</Text></TouchableOpacity>
-                </View>
-            </View>
-        ))
+            </View>        
     )
 }
 

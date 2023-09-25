@@ -34,22 +34,20 @@ export default function SendNotiScreen({route}) {
           setShowNotification(false);
           }, 3500);
       } else {
-          await schedulePushNotification((route.params.expoPushToken === "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]")? "ExponentPushToken[4JdT3eHCYaHdzcTzqAt1ql]" : "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]" , body, title, "default")
-          .then(() => {
+          await schedulePushNotification(route.params.userData.partnerToken, body, title, "default")
+          .then((response) => {
+            console.log(response)
             Haptics.notificationAsync(
             Haptics.NotificationFeedbackType.Success
             )
-            ref.where("owner", "==", route.params.name).get().then((querySnapshot) => {
-              querySnapshot.forEach((doc) => {
-                const data = doc.data()
                 const today = new Date()
                 const todayString = today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
-                ref.doc(doc.id).update({
+                ref.doc(route.params.userId).update({
                   lastSentDate: todayString,
-                  dailySentCount: data.dailySentCount + 1
+                  dailySentCount: route.params.userData.dailySentCount + 1
                 })
-              })
-            })
+             
+            
             const tempCount = sentNotificationCount + 1;
             setSentNotificationCount(tempCount)
           }) 
@@ -62,15 +60,12 @@ export default function SendNotiScreen({route}) {
         
     }
 
-    const saveNotification = () => {
-        ref.where("owner", "==", route.params.name).get().then((querySnaphot) => {
-            querySnaphot.forEach(doc => {
+    const saveNotification = () => {           
             const notificationToAdd = {
                 "title": title,
                 "body": body
             }
-            const userId = doc.id
-            const savedNotifications = doc.data().savedNotifications || [];
+            const savedNotifications = route.params.userData || [];
             if (savedNotifications.some((obj) => {
               return obj.title === title && obj.body === body;
             })) {
@@ -83,7 +78,7 @@ export default function SendNotiScreen({route}) {
             }
             else {
               savedNotifications.push(notificationToAdd);
-              ref.doc(userId).update({
+              ref.doc(route.params.userId).update({
                   savedNotifications: savedNotifications,
                   })
                   .then(() => {
@@ -98,10 +93,6 @@ export default function SendNotiScreen({route}) {
                   console.error('Error updating document: ', error);
                   });
             }
-            
-            });
-           
-        })
     }
 
     const clearNotification = () => {
@@ -122,29 +113,24 @@ export default function SendNotiScreen({route}) {
     }, [route.params]);
 
     useEffect(() => {
-      ref.where("owner", "==", route.params.name).get().then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const data = doc.data()
           const today = new Date();
           const todayString = today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
-          if (todayString !== data.lastSentDate) {
-            ref.doc(doc.id).update(
+          if (todayString !== route.params.userData.lastSentDate) {
+            ref.doc(route.params.userId).update(
               {dailySentCount: 0}
             ).then(() => {
               setSentNotificationCount(0);
             }) 
           } else {
-            setSentNotificationCount(data.dailySentCount)
+            setSentNotificationCount(route.params.userData.dailySentCount)
           }
-        })
-      })
     }, [])
 
     return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.container}>
         <View style={styles.firstContainer}>
-          <Text style={styles.welcomeText}>Hello {route.params.name}!!!</Text>
+          <Text style={styles.welcomeText}>Hello {route.params.userData.owner}!!!</Text>
           <Text style={{paddingBottom: 6, fontSize: 16}}>Send a custom notification:</Text>
           <View style={styles.notificationProp}>
             <View style={[styles.row, {paddingLeft: 20}]}>
@@ -172,7 +158,7 @@ export default function SendNotiScreen({route}) {
         </View>
         <View style={styles.secondContainer}>
           <Text style={{paddingBottom: 6, fontSize: 16}}>Or use one of the presets: </Text>
-          <ButtonContainer name={route.params.name} updateTitle={updateTitle} updateBody={updateBody}></ButtonContainer>
+          <ButtonContainer presets={route.params.userData.presets} name={route.params.userData.name} updateTitle={updateTitle} updateBody={updateBody}></ButtonContainer>
         </View>
       </View>
       {showNotification && (

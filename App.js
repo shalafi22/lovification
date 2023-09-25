@@ -23,7 +23,8 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   const [expoPushToken, setExpoPushToken] = useState('');
-  const [name, setName] = useState("");
+  const [data, setData] = useState("");
+  const [id, setId] = useState(null)
   const [isLoading, setIsLoading] = useState(true);
   const [savedNotifications, setSavedNotifications] = useState([])
   const [notification, setNotification] = useState(false);
@@ -39,8 +40,14 @@ export default function App() {
       try {
         const token = await registerForPushNotificationsAsync();
         setExpoPushToken(token);
-        setName(token === "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]" ? "bubu" : "bibi");
-        setIsLoading(false)
+        ref.where("token", "==", token).get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const userData = doc.data()
+             setData(userData)
+             setId(doc.id)
+             setIsLoading(false);
+          })
+        })
       } catch (error) {
         console.error('Error fetching data:', error);
         setIsLoading(false);
@@ -89,8 +96,8 @@ export default function App() {
           },
         })}
       >
-        <Tab.Screen name="Send" component={SendNotiScreen} options={{ title: 'Send Lovifications' }} initialParams={{name: name, expoPushToken: expoPushToken}} />
-        <Tab.Screen name="Saved" options={{ title: 'Saved Lovifications' }} initialParams={{name: name, savedNotifications: savedNotifications}}component={SavedNotisScreen} />
+        <Tab.Screen name="Send" component={SendNotiScreen} options={{ title: 'Send Lovifications' }} initialParams={{userData: data, userId: id, expoPushToken: expoPushToken}} />
+        <Tab.Screen name="Saved" options={{ title: 'Saved Lovifications' }} initialParams={{userData: data, userId: id}}component={SavedNotisScreen} />
       </Tab.Navigator>
     </NavigationContainer>
     
