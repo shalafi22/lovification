@@ -68,6 +68,5 @@ const styles = StyleSheet.create({
         fontWeight: "bold"
     },
 })
-//acil ilgi, bakim, wotur iç, pingu musun, ösledim
 
 export default ButtonContainer;

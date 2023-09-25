@@ -15,6 +15,7 @@ export default function SendNotiScreen({route}) {
     const [isSendDisabled, setIsSendDisabled] = useState(false);
 
     const ref = firebase.firestore().collection("tokens")
+
     const updateTitle = (newTitle) => {
         setTitle(newTitle)
     }
@@ -103,17 +104,6 @@ export default function SendNotiScreen({route}) {
         })
     }
 
-    const handleLongPress = async () => {
-    if (title === "" || body === "") {
-        alert("Write something")
-    } else {
-        await schedulePushNotification((route.params.expoPushToken === "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]")? "ExponentPushToken[4JdT3eHCYaHdzcTzqAt1ql]" : "ExponentPushToken[HJ1JkfIk9SucaYln6dfBOI]", body, title, "longpress");
-        Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Success
-        )
-    }
-    }
-
     const clearNotification = () => {
       setBody("")
       setTitle("")
@@ -151,7 +141,7 @@ export default function SendNotiScreen({route}) {
     }, [])
 
     return (
-        <SafeAreaView style={styles.wrapper}>
+    <SafeAreaView style={styles.wrapper}>
       <View style={styles.container}>
         <View style={styles.firstContainer}>
           <Text style={styles.welcomeText}>Hello {route.params.name}!!!</Text>
@@ -174,7 +164,6 @@ export default function SendNotiScreen({route}) {
             <TouchableOpacity 
             disabled={isSendDisabled}
             onPress={handlePress}
-            onLongPress={handleLongPress}
             style={styles.sendButton}>
               <Text style={{fontSize: 18, fontWeight: "bold"}}>Send</Text>
             </TouchableOpacity>
@@ -205,10 +194,6 @@ async function schedulePushNotification(targetToken, body, title, channelId) {
           title: title,
           body: body,
           channelId: channelId,
-  
-          data: {
-            backgroundColor: "red"
-          },
         }),
         headers: {
           'Content-Type': 'application/json',
