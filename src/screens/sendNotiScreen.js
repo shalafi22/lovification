@@ -65,7 +65,7 @@ export default function SendNotiScreen({route}) {
                 "title": title,
                 "body": body
             }
-            const savedNotifications = route.params.userData || [];
+            const savedNotifications = route.params.userData.savedNotifications || [];
             if (savedNotifications.some((obj) => {
               return obj.title === title && obj.body === body;
             })) {
