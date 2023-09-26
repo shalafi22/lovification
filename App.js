@@ -40,11 +40,20 @@ export default function App() {
       try {
         const token = await registerForPushNotificationsAsync();
         setExpoPushToken(token);
+        console.log(token)
         ref.where("token", "==", token).get().then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             const userData = doc.data()
              setData(userData)
              setId(doc.id)
+             const today = new Date();
+            const todayString = today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
+            if (todayString !== userData.lastSentDate) {
+            ref.doc(doc.id).update(
+              {dailySentCount: 0}
+            )
+            }
+
              setIsLoading(false);
           })
         })

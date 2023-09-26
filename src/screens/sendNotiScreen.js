@@ -36,16 +36,15 @@ export default function SendNotiScreen({route}) {
       } else {
           await schedulePushNotification(route.params.userData.partnerToken, body, title, "default")
           .then((response) => {
-            console.log(response)
             Haptics.notificationAsync(
             Haptics.NotificationFeedbackType.Success
             )
-                const today = new Date()
-                const todayString = today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
-                ref.doc(route.params.userId).update({
-                  lastSentDate: todayString,
-                  dailySentCount: route.params.userData.dailySentCount + 1
-                })
+            const today = new Date()
+            const todayString = today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
+            ref.doc(route.params.userId).update({
+              lastSentDate: todayString,
+              dailySentCount: route.params.userData.dailySentCount + 1
+            })
              
             
             const tempCount = sentNotificationCount + 1;
@@ -113,17 +112,7 @@ export default function SendNotiScreen({route}) {
     }, [route.params]);
 
     useEffect(() => {
-          const today = new Date();
-          const todayString = today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
-          if (todayString !== route.params.userData.lastSentDate) {
-            ref.doc(route.params.userId).update(
-              {dailySentCount: 0}
-            ).then(() => {
-              setSentNotificationCount(0);
-            }) 
-          } else {
             setSentNotificationCount(route.params.userData.dailySentCount)
-          }
     }, [])
 
     return (
