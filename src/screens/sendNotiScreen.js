@@ -36,7 +36,7 @@ export default function SendNotiScreen({route}) {
           }, 3500);
       } else {
           await schedulePushNotification(route.params.userData.partnerToken, body, title, "default")
-          .then((response) => {
+          .then(() => {
             Haptics.notificationAsync(
             Haptics.NotificationFeedbackType.Success
             )
@@ -44,7 +44,7 @@ export default function SendNotiScreen({route}) {
             const todayString = today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
             ref.doc(route.params.userId).update({
               lastSentDate: todayString,
-              dailySentCount: route.params.userData.dailySentCount + 1
+              dailySentCount: sentNotificationCount + 1
             })
              
             

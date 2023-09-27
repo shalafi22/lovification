@@ -42,7 +42,7 @@ export default function App() {
         console.log(token)
         ref.where("token", "==", token).get().then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
-            const userData = doc.data()
+            let userData = doc.data()
              setData(userData)
              setId(doc.id)
              const today = new Date();
@@ -51,6 +51,8 @@ export default function App() {
             ref.doc(doc.id).update(
               {dailySentCount: 0}
             )
+            userData.dailySentCount = 0
+            setData(userData)
             }
 
              setIsLoading(false);
