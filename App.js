@@ -1,4 +1,4 @@
-import { ActivityIndicator, Platform, Text } from "react-native"
+import { ActivityIndicator, Platform, View, Image } from "react-native"
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { useState, useEffect, useRef } from 'react';
@@ -7,7 +7,6 @@ import SendNotiScreen from './src/screens/sendNotiScreen';
 import SavedNotisScreen from "./src/screens/savedNotisScreen";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from "@react-navigation/native";
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { firebase } from "./firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -89,25 +88,45 @@ export default function App() {
 
   return (isLoading)?(<SafeAreaView stlye={{flex: 1, height:"100%", justifyContent: "center", alignItems: "center"}}><ActivityIndicator size="large" color="green" /></SafeAreaView>):(
     <NavigationContainer>
+      <View style={{flex: 1, backgroundColor: "#eaedf6"}}>
       <Tab.Navigator 
         initialRouteName="Send"
         screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
+          tabBarShowLabel: false,
+          tabBarStyle: {
+            width: "90%",
+            alignSelf: "center",
+            backgroundColor: "#4c7ee1",
+            elevation: 10,
+            borderWidth: 0,
+            borderRadius: 15,
+            marginBottom: 10
+          },
+          tabBarIcon: ({ focused }) => {
             let iconName;
 
-            if (route.name === 'Send') {
-              iconName = focused ? 'mail' : 'mail-outline';
-            } else if (route.name === 'Saved') {
-              iconName = focused ? 'bookmark' : 'bookmark-outline'; 
+            const iconImages = {
+              "OpenEnvelope.png": require("./assets/OpenEnvelope.png"),
+              "Email.png": require("./assets/Email.png"),
+              "Bookmark.png": require("./assets/Bookmark.png"),
+              "Book.png": require("./assets/Book.png")
             }
 
-            return <Ionicons name={iconName} size={size} color={color} />;
+            if (route.name === 'Send') {
+              iconName = focused ? 'OpenEnvelope.png' : 'Email.png';
+            } else if (route.name === 'Saved') {
+              iconName = focused ? 'Bookmark.png' : 'Book.png'; 
+            }
+
+            return <Image source={iconImages[iconName]} />;
           },
         })}
       >
         <Tab.Screen name="Send" component={SendNotiScreen} options={{ title: 'Send Lovifications', headerShown: false }} initialParams={{userData: data, userId: id, expoPushToken: expoPushToken}} />
-        <Tab.Screen name="Saved" options={{ title: 'Saved Lovifications' }} initialParams={{userData: data, userId: id}}component={SavedNotisScreen} />
+        <Tab.Screen name="Saved" options={{ title: 'Saved Lovifications', headerShown: false }} initialParams={{userData: data, userId: id}}component={SavedNotisScreen} />
       </Tab.Navigator>
+      </View>
+      
     </NavigationContainer>
     
   );
