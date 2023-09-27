@@ -105,7 +105,7 @@ export default function App() {
           },
         })}
       >
-        <Tab.Screen name="Send" component={SendNotiScreen} options={{ title: 'Send Lovifications' }} initialParams={{userData: data, userId: id, expoPushToken: expoPushToken}} />
+        <Tab.Screen name="Send" component={SendNotiScreen} options={{ title: 'Send Lovifications', headerShown: false }} initialParams={{userData: data, userId: id, expoPushToken: expoPushToken}} />
         <Tab.Screen name="Saved" options={{ title: 'Saved Lovifications' }} initialParams={{userData: data, userId: id}}component={SavedNotisScreen} />
       </Tab.Navigator>
     </NavigationContainer>

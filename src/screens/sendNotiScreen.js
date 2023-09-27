@@ -5,6 +5,7 @@ import * as Haptics from "expo-haptics";
 import NotificationPopup from '../components/NotificationPopup';
 import { firebase } from "../../firebaseConfig";
 import {StatusBar} from "expo-status-bar";
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function SendNotiScreen({route}) {
     const [title, setTitle] = useState("");
@@ -119,8 +120,19 @@ export default function SendNotiScreen({route}) {
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.container}>
         <View style={styles.firstContainer}>
-          <Text style={styles.welcomeText}>Hello {route.params.userData.owner}!!!</Text>
-          <Text style={{paddingBottom: 6, fontSize: 16}}>Send a custom notification:</Text>
+          <Text style={styles.welcomeText}>Welcome, {route.params.userData.owner}!!!</Text>
+          <Image style={{width: 54, height: 142, position: "absolute", right: "8%", top: "16%", zIndex: 5}} source={require("../../assets/penguin.png")} />
+          <View style={styles.countTextContainer}>
+          <Text style={styles.countText}>You sent </Text>
+          <View style={styles.numberTextContainer}>
+           <Text style={styles.countText}>{sentNotificationCount}</Text>
+          </View>
+          <Text style={styles.countText}> Lovification(s) today!</Text>
+          </View>
+        </View>
+
+        <View style={styles.secondContainer}>
+        <Text style={{paddingBottom: 6, fontSize: 16}}>Send a custom lovification:</Text>
           <View style={styles.notificationProp}>
             <View style={[styles.row, {paddingLeft: 20}]}>
               <Image style={{width: 26, height: 26}} source={require('../../assets/icon.png')} />
@@ -129,24 +141,33 @@ export default function SendNotiScreen({route}) {
             <TextInput placeholder={"Type your title here"} placeholderTextColor={"black"} style={styles.titleTextInp}value={title} onChangeText={setTitle} />
             <TextInput multiline={true} placeholder={"Type your message here"} placeholderTextColor={"black"} style={styles.bodyTextInp}value={body} onChangeText={setBody} />
           </View>
-          <View style={[styles.row, {justifyContent: "space-evenly"}]}>
-            <TouchableOpacity onPress={saveNotification} style={[styles.sendButton, {backgroundColor: "yellow"}]}>
-              <Text style={{fontSize: 18, fontWeight: "bold"}}>Save</Text>
+          <View style={[styles.row, {justifyContent: "space-evenly", paddingTop: 10}]}>
+            <TouchableOpacity onPress={saveNotification} style={styles.sendButton}>
+              <Text style={{fontSize: 18, fontWeight: "bold",  marginRight: 8}}>Save</Text>
+              <Image source={require("../../assets/SaveIcon.png")} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={clearNotification} style={[styles.sendButton, {backgroundColor: "red"}]}>
-              <Text style={{fontSize: 18, fontWeight: "bold"}}>Clear</Text>
+            <TouchableOpacity onPress={clearNotification} style={styles.sendButton}>
+              <Text style={{fontSize: 18, fontWeight: "bold", marginRight: 8}}>Clear</Text>
+              <Image source={require("../../assets/ClearIcon.png")} />
             </TouchableOpacity>
             <TouchableOpacity 
             disabled={isSendDisabled}
             onPress={handlePress}
             style={styles.sendButton}>
-              <Text style={{fontSize: 18, fontWeight: "bold"}}>Send</Text>
+              <Text style={{fontSize: 18, fontWeight: "bold", marginRight: 8}}>Send</Text>
+              <Image source={require("../../assets/SendIcon.png")} />
             </TouchableOpacity>
           </View>
-          <Text style={{alignSelf: "center", paddingTop: 10, marginBottom: -20, fontSize: 22, fontWeight: "bold"}}>You sent <Text style={{color: "red"}}>{sentNotificationCount}</Text> Lovification(s) today!</Text>
         </View>
-        <View style={styles.secondContainer}>
-          <Text style={{paddingBottom: 6, fontSize: 16}}>Or use one of the presets: </Text>
+        
+        <View style={styles.thirdContainer}>
+          <View style={styles.row}>
+            <Text style={{paddingBottom: 6, fontSize: 16}}>Or use one of the presets: </Text>
+            <TouchableOpacity style={{marginLeft: "20%", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+              <Ionicons name="pencil" size={24} color="black" />
+              <Text style={{paddingHorizontal: 10}}>Edit</Text>
+            </TouchableOpacity>
+          </View>
           <ButtonContainer presets={route.params.userData.presets} name={route.params.userData.name} updateTitle={updateTitle} updateBody={updateBody}></ButtonContainer>
         </View>
       </View>
@@ -179,27 +200,61 @@ async function schedulePushNotification(targetToken, body, title, channelId) {
 
 const styles = StyleSheet.create({
     firstContainer: {
+      marginTop: 10,
       width: "100%",
-      borderBottomWidth: 1,
-      paddingBottom: 40,
-      borderBottomColor: "lightgrey",
+      borderWidth: 1,
+      borderColor: "lightgrey",
+      backgroundColor: "#4C7EE1",
+      borderRadius: 12,
+      flex: 0.3,
+      elevation: 5
     },
     secondContainer: {
+      flex: 0.3,
+      width: "100%"
+    },
+    countTextContainer: {
+      alignSelf: "center", 
+      textAlign: "center",
+      paddingTop: 10,
+      backgroundColor: "#c6def1",
+      borderRadius: 12,
+      paddingBottom: 44,
+      width: "95%",
+      marginTop: "8%",
+      elevation: 14,
+      flexDirection: "row",
+      justifyContent: "center"
+    },
+    numberTextContainer: {
+      paddingHorizontal: 26,
+      backgroundColor: "#4c7ee1",
+      borderRadius: 5
+    },
+    countText: {
+      fontWeight: "500",
+    },
+    thirdContainer: {
       width: "100%",
-      marginTop: 10
+      marginTop: 10,
+      flex: 0.3
     },
     sendButton: {
       alignSelf: "center",
-      backgroundColor: "lightblue",
+      backgroundColor: "#4c7ee1",
       borderRadius: 15,
       padding: 10,
       marginTop: 10,
-      elevation: 5
+      elevation: 10,
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
     },
     welcomeText: {
-      fontSize: 40,
-      marginBottom: 40,
-      borderBottomWidth: 2
+      fontSize: 26,
+      fontWeight: "700",
+      paddingTop: "18%",
+      paddingLeft: 10,
     },
     buttonText: {
       fontSize: 40, 
@@ -233,13 +288,14 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       alignItems: 'center',
-      justifyContent: "center"
+      justifyContent: "space-evenly",
     },
     wrapper: {
       flexDirection: "column", 
       justifyContent:"center", 
       flex: 1,
       padding: 10,
+      backgroundColor: "#eaedf6"
     },
     notificationProp: {
       borderWidth: 2,
@@ -247,6 +303,8 @@ const styles = StyleSheet.create({
       borderColor: "#eaeaea",
       backgroundColor: "white",
       borderRadius: 15,
+      borderWidth: 2,
+      borderColor: "black"
     },
     row: {
       flexDirection: "row",
