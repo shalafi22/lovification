@@ -146,7 +146,7 @@ export default function SavedNotisScreen({route, navigation}) {
         <View style={styles.topTab}>
           <Text style={{fontSize: 20, fontWeight: "500"}}>Saved Lovifications</Text>
         </View>
-        <View style={{width: "100%"}}>
+        <View style={{width: "100%", marginBottom: "30%"}}>
           <FlatList 
             data={savedNotifications}
             renderItem={({item}) => <SavedNotificationItem handlePress={handlePress} navigation={navigation} title={item.title} body={item.body}/>}
