@@ -9,7 +9,7 @@ import * as Haptics from "expo-haptics";
 const SavedNotificationItem = (props) => {    
     return (
             <TouchableOpacity onPress={() => {props.handlePress({"title": props.title, "body": props.body})}} style={styles.notificationProp}>
-                <View>
+                <View style={{width: "100%", borderWidth: 2, borderRadius: 15}}>
                     <View style={[styles.row, {paddingLeft: 20}]}>
                         <Image style={{width: 26, height: 26}} source={require('../../assets/icon.png')} />
                         <Text style={styles.notificationAppText}>lovification</Text>
@@ -141,18 +141,22 @@ export default function SavedNotisScreen({route, navigation}) {
         fetchSaved();
       }, []);
 
-    return (isLoading) ? (<SafeAreaView stlye={{flex: 1, height:"100%", justifyContent: "center", alignItems: "center"}}><ActivityIndicator size="large" color="green" /></SafeAreaView>):( 
-      <SafeAreaView stlye={{flex: 1, height:"100%", justifyContent: "center", alignItems: "center"}}>
-        <View>
+    return (isLoading) ? (<SafeAreaView style={{flex: 1, height:"100%", justifyContent: "center", alignItems: "center"}}><ActivityIndicator size="large" color="green" /></SafeAreaView>):( 
+      <SafeAreaView style={{flex: 1, alignItems: "center", paddingHorizontal: 20}}>
+        <View style={styles.topTab}>
+          <Text style={{fontSize: 20, fontWeight: "500"}}>Saved Lovifications</Text>
+        </View>
+        <View style={{width: "100%"}}>
           <FlatList 
             data={savedNotifications}
             renderItem={({item}) => <SavedNotificationItem handlePress={handlePress} navigation={navigation} title={item.title} body={item.body}/>}
         />
+        </View>
         <ActionModal handleSendPress={handleSendPress} handleSavePreset={handleSavePreset} handleSaveChanges={handleSaveChanges} visible={isActionModalVisible} title={selectedItem.title} handleDelete={handleDelete} body={selectedItem.body} handleModalClose={handleActionModalClose}/>
         <SavePresetModal title={selectedItem.title} body={selectedItem.body} visible={isSavePresetModalVisible} handleModalClose={handleSaveModalClose} saveAsPreset={saveAsPreset}/>
-        </View>
+        
         <StatusBar style="dark"
-        translucent={true}
+        translucent={false}
         hidden={false}
         />
       </SafeAreaView>
@@ -163,33 +167,42 @@ export default function SavedNotisScreen({route, navigation}) {
 }
 
 const styles = StyleSheet.create({
-    bodyTextInp: {
-        width: "100%",
-        marginBottom: 8,
-        paddingLeft: 20,
-        paddingRight: 5,
-        color: "black",
-      },
-      notificationAppText: {
-        paddingLeft: 10,
-        color: "#bababa"
-      },
-      titleTextInp: {
-        marginVertical: 5,
-        paddingLeft: 20,
-        color: "black",
-        fontSize: 18,
-      },
-      notificationProp: {
-        borderWidth: 2,
-        width: "100%",
-        borderColor: "#eaeaea",
-        backgroundColor: "white",
-        borderRadius: 15,
-        marginBottom: 5,
-      },
-      row: {
-        flexDirection: "row",
-        alignItems: "center"
-      },
+  topTab: {
+    width: "100%",
+    backgroundColor: "#4c7ee1",
+    borderRadius: 15,
+    justifyContent: "center",
+    paddingVertical: 20,
+    marginBottom: 20,
+    paddingLeft: 10
+  },
+  bodyTextInp: {
+      width: "100%",
+      marginBottom: 8,
+      paddingLeft: 20,
+      paddingRight: 5,
+      color: "black",
+    },
+    notificationAppText: {
+      paddingLeft: 10,
+      color: "#bababa"
+    },
+    titleTextInp: {
+      marginVertical: 5,
+      paddingLeft: 20,
+      color: "black",
+      fontSize: 18,
+    },
+    notificationProp: {
+      borderWidth: 2,
+      width: "100%",
+      borderColor: "#eaeaea",
+      backgroundColor: "white",
+      borderRadius: 15,
+      marginBottom: 5,
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center"
+    },
 })
