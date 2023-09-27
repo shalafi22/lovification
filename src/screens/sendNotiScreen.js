@@ -135,7 +135,7 @@ export default function SendNotiScreen({route}) {
         <Text style={{paddingBottom: 6, fontSize: 16}}>Send a custom lovification:</Text>
           <View style={styles.notificationProp}>
             <View style={[styles.row, {paddingLeft: 20}]}>
-              <Image style={{width: 26, height: 26}} source={require('../../assets/icon.png')} />
+            <Image style={{width: 30, height: 30, marginLeft: -5}} source={require('../../assets/prop-icon.png')} />
               <Text style={styles.notificationAppText}>lovification</Text>
             </View>
             <TextInput placeholder={"Type your title here"} placeholderTextColor={"black"} style={styles.titleTextInp}value={title} onChangeText={setTitle} />
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     welcomeText: {
       fontSize: 26,
       fontWeight: "700",
-      paddingTop: "18%",
+      paddingTop: "16%",
       paddingLeft: 10,
     },
     buttonText: {
@@ -276,7 +276,6 @@ const styles = StyleSheet.create({
       color: "black",
     },
     notificationAppText: {
-      paddingLeft: 10,
       color: "#bababa"
     },
     titleTextInp: {

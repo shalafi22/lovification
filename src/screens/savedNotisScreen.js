@@ -11,7 +11,7 @@ const SavedNotificationItem = (props) => {
             <TouchableOpacity onPress={() => {props.handlePress({"title": props.title, "body": props.body})}} style={styles.notificationProp}>
                 <View style={{width: "100%", borderWidth: 2, borderRadius: 15}}>
                     <View style={[styles.row, {paddingLeft: 20}]}>
-                        <Image style={{width: 26, height: 26}} source={require('../../assets/icon.png')} />
+                        <Image style={{width: 30, height: 30, marginLeft: -5}} source={require('../../assets/prop-icon.png')} />
                         <Text style={styles.notificationAppText}>lovification</Text>
                     </View>
                     <Text style={styles.titleTextInp} >{props.title}</Text>
@@ -185,7 +185,6 @@ const styles = StyleSheet.create({
       color: "black",
     },
     notificationAppText: {
-      paddingLeft: 10,
       color: "#bababa"
     },
     titleTextInp: {
@@ -199,7 +198,7 @@ const styles = StyleSheet.create({
       width: "100%",
       borderColor: "#eaeaea",
       backgroundColor: "white",
-      borderRadius: 15,
+      borderRadius: 25,
       marginBottom: 5,
     },
     row: {
