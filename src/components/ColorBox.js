@@ -5,11 +5,11 @@ export default function ColorBox(props) {
         backgroundColor: props.color
     }
     const containerStyle = {
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: (props.selected) ? "black" : "white"
     }
     return (
-        <TouchableOpacity onPress={() => {props.modifyArray(props.idx)}} style={[styles.container, containerStyle]}>
+        <TouchableOpacity activeOpacity={1} onPress={() => {props.modifyArray(props.idx)}} style={[styles.container, containerStyle]}>
             <View style={[styles.box, boxStyle]}/>
         </TouchableOpacity>
     )
@@ -18,12 +18,12 @@ export default function ColorBox(props) {
 const styles = StyleSheet.create({
     container: {
         borderRadius: 5,
-        padding: 2,
-        
+        elevation: 5,
     },
     box: {
-        width: 24,
-        height: 24,
-        borderRadius: 5
+        width: 36,
+        height: 36,
+        borderRadius: 5,
+        elevation: 5
     }
 })

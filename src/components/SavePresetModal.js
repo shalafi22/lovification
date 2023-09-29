@@ -5,7 +5,7 @@ import ColorBox from "./ColorBox";
 export default function SavePresetModal(props) {
     const [name, setName] = useState("")
     const [colorArray, setColorArray] = useState([true, false, false, false, false, false])
-    const [colorCodesArray, setColorCodesArray] = useState(["red", "navy", "grey", "lightblue", "lightgreen", "pink"])
+    const [colorCodesArray, setColorCodesArray] = useState(["#fff0a3", "#92e3d1", "#c9abf7", "#f19ecc", "#fcad76", "#8ed0f5"])
 
     const modifyArray = (index) => {
         if (!colorArray[index]) {

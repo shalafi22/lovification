@@ -25,7 +25,6 @@ export default function App() {
   const [data, setData] = useState("");
   const [id, setId] = useState(null)
   const [isLoading, setIsLoading] = useState(true);
-  const [savedNotifications, setSavedNotifications] = useState([])
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();

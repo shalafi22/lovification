@@ -42,10 +42,18 @@ export default function SendNotiScreen({route}) {
             )
             const today = new Date()
             const todayString = today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
-            ref.doc(route.params.userId).update({
+            if (todayString !== route.params.userData.lastSentDate) {
+              ref.doc(route.params.userId).update({
+                lastSentDate: todayString,
+                dailySentCount: 1
+              })
+            }
+            else {
+              ref.doc(route.params.userId).update({
               lastSentDate: todayString,
               dailySentCount: sentNotificationCount + 1
             })
+          }
              
             
             const tempCount = sentNotificationCount + 1;
@@ -139,7 +147,7 @@ export default function SendNotiScreen({route}) {
               <Text style={styles.notificationAppText}>lovification</Text>
             </View>
             <TextInput placeholder={"Type your title here"} placeholderTextColor={"black"} style={styles.titleTextInp}value={title} onChangeText={setTitle} />
-            <TextInput multiline={true} placeholder={"Type your message here"} placeholderTextColor={"black"} style={styles.bodyTextInp}value={body} onChangeText={setBody} />
+            <TextInput placeholder={"Type your message here"} placeholderTextColor={"black"} style={styles.bodyTextInp}value={body} onChangeText={setBody} />
           </View>
           <View style={[styles.row, {justifyContent: "space-evenly", paddingTop: 10}]}>
             <TouchableOpacity onPress={saveNotification} style={styles.sendButton}>

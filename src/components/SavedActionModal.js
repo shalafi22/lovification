@@ -25,20 +25,20 @@ const ActionModal = (props) => {
                       <TextInput multiline={true} style={styles.bodyTextInp} value={bodyTemp} onChangeText={setBodyTemp} />
                   </View>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.iconRow} onPress={() => {props.handleDelete(props.title, props.body)}}>
-                  <Ionicons name="trash-bin" size={20} color="red" />
+              <TouchableOpacity style={[styles.iconRow, {backgroundColor: "#ffabab"}]} onPress={() => {props.handleDelete(props.title, props.body)}}>
+                  <Image style={{height: 30, width: 30}} source={require("../../assets/modal-delete.png")} />
                   <Text style={{paddingLeft: 10}}>Delete Notification</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => {props.handleSaveChanges(props.title, props.body, titleTemp, bodyTemp)}} style={styles.iconRow}>
-                  <Ionicons name="save" size={20} color="blue" />
+              <TouchableOpacity onPress={() => {props.handleSaveChanges(props.title, props.body, titleTemp, bodyTemp)}} style={[styles.iconRow, {backgroundColor: "#c1fd9b"}]}>
+                <Image style={{height: 30, width: 30}} source={require("../../assets/modal-save-as.png")} />
                   <Text style={{paddingLeft: 10}}>Save Changes</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.iconRow} onPress={() => {props.handleSavePreset()}}>
-                  <Ionicons name="star" size={20} color="gold" />
+              <TouchableOpacity style={[styles.iconRow, {backgroundColor: "#fdffaa"}]} onPress={() => {props.handleSavePreset()}}>
+                  <Image style={{height: 30, width: 30}} source={require("../../assets/modal-save-preset.png")} />
                   <Text style={{paddingLeft: 10}}>Save Notification as Preset</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => {props.handleSendPress(props.title, props.body)}} style={styles.iconRow}>
-                  <Ionicons name="send" size={20} color="green" />
+              <TouchableOpacity onPress={() => {props.handleSendPress(props.title, props.body)}} style={[styles.iconRow, {backgroundColor: "#aefef9"}]}>
+                  <Image style={{height: 30, width: 30}} source={require("../../assets/modal-send.png")} />
                   <Text style={{paddingLeft: 10}}>Send Notification</Text>
               </TouchableOpacity>
             </View>
@@ -58,10 +58,10 @@ const ActionModal = (props) => {
         width: "90%",
         marginVertical: 5,
         paddingHorizontal: 5,
-        paddingVertical: 8,
+        paddingVertical: 2,
         borderRadius: 15,
-        borderWidth: 2,
-        borderColor: "#bababa",
+        borderWidth: 1,
+        borderColor: "black",
         backgroundColor: "#ffffff",
         alignSelf: "flex-end",
         flexDirection: "row",
@@ -76,7 +76,7 @@ const ActionModal = (props) => {
       notificationProp: {
         borderWidth: 2,
         width: "100%",
-        borderColor: "#eaeaea",
+        borderColor: "black",
         backgroundColor: "white",
         borderRadius: 15,
         marginBottom: 5,
