@@ -38,7 +38,6 @@ export default function App() {
       try {
         const token = await registerForPushNotificationsAsync();
         setExpoPushToken(token);
-        console.log(token)
         ref.where("token", "==", token).get().then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             let userData = doc.data()
