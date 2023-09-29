@@ -6,9 +6,11 @@ import * as Linking from 'expo-linking';
 import SendNotiScreen from './src/screens/sendNotiScreen';
 import SavedNotisScreen from "./src/screens/savedNotisScreen";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { firebase } from "./firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
+import WelcomeScreen from "./src/screens/WelcomeScreen";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -19,6 +21,7 @@ Notifications.setNotificationHandler({
 });
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 export default function App() {
   const [expoPushToken, setExpoPushToken] = useState('');
@@ -86,46 +89,49 @@ export default function App() {
     };
   }, []);
 
+  const TabNavigator = () => (<Tab.Navigator 
+    initialRouteName="Send"
+    screenOptions={({ route }) => ({
+      tabBarShowLabel: false,
+      tabBarStyle: {
+        width: "90%",
+        alignSelf: "center",
+        backgroundColor: "#4c7ee1",
+        elevation: 10,
+        borderWidth: 0,
+        borderRadius: 15,
+        marginBottom: 10
+      },
+      tabBarIcon: ({ focused }) => {
+        let iconName;
+
+        const iconImages = {
+          "OpenEnvelope.png": require("./assets/OpenEnvelope.png"),
+          "Email.png": require("./assets/Email.png"),
+          "Bookmark.png": require("./assets/Bookmark.png"),
+          "Book.png": require("./assets/Book.png")
+        }
+
+        if (route.name === 'Send') {
+          iconName = focused ? 'OpenEnvelope.png' : 'Email.png';
+        } else if (route.name === 'Saved') {
+          iconName = focused ? 'Bookmark.png' : 'Book.png'; 
+        }
+
+        return <Image source={iconImages[iconName]} />;
+      },
+    })}
+  >
+    <Tab.Screen name="Send" component={SendNotiScreen} options={{ title: 'Send Lovifications', headerShown: false }} initialParams={{userData: data, userId: id, expoPushToken: expoPushToken}} />
+    <Tab.Screen name="Saved" options={{ title: 'Saved Lovifications', headerShown: false }} initialParams={{userData: data, userId: id}}component={SavedNotisScreen} />
+  </Tab.Navigator>)
+
   return (isLoading)?(<SafeAreaView stlye={{flex: 1, height:"100%", justifyContent: "center", alignItems: "center"}}><ActivityIndicator size="large" color="green" /></SafeAreaView>):(
     <NavigationContainer>
-      <View style={{flex: 1, backgroundColor: "#eaedf6"}}>
-      <Tab.Navigator 
-        initialRouteName="Send"
-        screenOptions={({ route }) => ({
-          tabBarShowLabel: false,
-          tabBarStyle: {
-            width: "90%",
-            alignSelf: "center",
-            backgroundColor: "#4c7ee1",
-            elevation: 10,
-            borderWidth: 0,
-            borderRadius: 15,
-            marginBottom: 10
-          },
-          tabBarIcon: ({ focused }) => {
-            let iconName;
-
-            const iconImages = {
-              "OpenEnvelope.png": require("./assets/OpenEnvelope.png"),
-              "Email.png": require("./assets/Email.png"),
-              "Bookmark.png": require("./assets/Bookmark.png"),
-              "Book.png": require("./assets/Book.png")
-            }
-
-            if (route.name === 'Send') {
-              iconName = focused ? 'OpenEnvelope.png' : 'Email.png';
-            } else if (route.name === 'Saved') {
-              iconName = focused ? 'Bookmark.png' : 'Book.png'; 
-            }
-
-            return <Image source={iconImages[iconName]} />;
-          },
-        })}
-      >
-        <Tab.Screen name="Send" component={SendNotiScreen} options={{ title: 'Send Lovifications', headerShown: false }} initialParams={{userData: data, userId: id, expoPushToken: expoPushToken}} />
-        <Tab.Screen name="Saved" options={{ title: 'Saved Lovifications', headerShown: false }} initialParams={{userData: data, userId: id}}component={SavedNotisScreen} />
-      </Tab.Navigator>
-      </View>
+      <Stack.Navigator initialRouteName="Welcome">
+        <Stack.Screen options={{headerShown: false}} name="Welcome" component={WelcomeScreen} />
+        <Stack.Screen options={{headerShown: false}} name="Tabs" component={TabNavigator} />
+      </Stack.Navigator>
       
     </NavigationContainer>
     

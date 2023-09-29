@@ -2,7 +2,7 @@ import { View, StyleSheet, Text, Image, TouchableOpacity  } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from 'expo-linear-gradient';
 
-export default function WelcomeScreen() {
+export default function WelcomeScreen(props) {
     return(
         <SafeAreaView style={styles.wrapper}>
             <View style={{height: "40%", elevation: 15, borderRadius: 12, width: "100%"}}>
@@ -46,7 +46,7 @@ export default function WelcomeScreen() {
 
                     </View>
                 </View>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity onPress={() => {props.navigation.navigate("Tabs")}} style={styles.button}>
                     <Text style={{fontSize: 24}}>Access</Text>
                 </TouchableOpacity>
         </SafeAreaView>
