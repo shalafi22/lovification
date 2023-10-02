@@ -11,6 +11,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { firebase } from "./firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WelcomeScreen from "./src/screens/WelcomeScreen";
+import 'react-native-gesture-handler';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({

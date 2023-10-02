@@ -317,7 +317,8 @@ const styles = StyleSheet.create({
       backgroundColor: "white",
       borderRadius: 15,
       borderWidth: 2,
-      borderColor: "black"
+      borderColor: "black",
+      elevation: 20,
     },
     row: {
       flexDirection: "row",
