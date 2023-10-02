@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import { ActivityIndicator, Platform, View, Image } from "react-native"
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
@@ -11,7 +12,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { firebase } from "./firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WelcomeScreen from "./src/screens/WelcomeScreen";
-import 'react-native-gesture-handler';
+
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
