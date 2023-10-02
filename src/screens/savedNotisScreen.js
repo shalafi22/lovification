@@ -142,7 +142,7 @@ export default function SavedNotisScreen({route, navigation}) {
       }, []);
 
     return (isLoading) ? (<SafeAreaView style={{flex: 1, height:"100%", justifyContent: "center", alignItems: "center"}}><ActivityIndicator size="large" color="green" /></SafeAreaView>):( 
-      <SafeAreaView style={{flex: 1, alignItems: "center", paddingHorizontal: 20, backgroundColor: "#eaedf6"}}>
+      <SafeAreaView style={{flex: 1, alignItems: "center", paddingTop: 20, paddingHorizontal: 20, backgroundColor: "#eaedf6"}}>
         <View style={styles.topTab}>
           <Text style={{fontSize: 20, fontWeight: "500"}}>Saved Lovifications</Text>
         </View>
@@ -156,7 +156,7 @@ export default function SavedNotisScreen({route, navigation}) {
         <SavePresetModal title={selectedItem.title} body={selectedItem.body} visible={isSavePresetModalVisible} handleModalClose={handleSaveModalClose} saveAsPreset={saveAsPreset}/>
         
         <StatusBar style="dark"
-        translucent={false}
+        translucent={true}
         hidden={false}
         />
       </SafeAreaView>

@@ -1,6 +1,7 @@
 import { View, StyleSheet, Text, Image, TouchableOpacity  } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from 'expo-linear-gradient';
+import {StatusBar} from "expo-status-bar";
 
 export default function WelcomeScreen(props) {
     return(
@@ -49,6 +50,10 @@ export default function WelcomeScreen(props) {
                 <TouchableOpacity onPress={() => {props.navigation.navigate("Tabs")}} style={styles.button}>
                     <Text style={{fontSize: 24}}>Access</Text>
                 </TouchableOpacity>
+                <StatusBar style="dark"
+                       translucent={true}
+                       hidden={false}
+            />
         </SafeAreaView>
     )
 }

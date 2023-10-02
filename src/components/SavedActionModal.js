@@ -1,6 +1,5 @@
 import { TextInput, Text, View, Image, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import { useState, useEffect } from "react";
-import Ionicons from '@expo/vector-icons/Ionicons';
 
 const ActionModal = (props) => {
     const [titleTemp, setTitleTemp] = useState(props.title);

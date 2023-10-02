@@ -63,7 +63,7 @@ export default function SendNotiScreen({route}) {
         setIsSendDisabled(true);
         setTimeout(() => {
           setIsSendDisabled(false);
-        }, 500)
+        }, 300)
       }
         
     }
@@ -83,8 +83,14 @@ export default function SendNotiScreen({route}) {
               setTimeout(() => {
               setShowNotification(false);
               }, 3500);
-            }
-            else {
+            } else if (notificationToAdd.title === "" && notificationToAdd.body === "") {
+              setMessage("Can't save empty lovification")
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+              setShowNotification(true);
+              setTimeout(() => {
+              setShowNotification(false);
+              }, 3500);
+            } else {
               savedNotifications.push(notificationToAdd);
               ref.doc(route.params.userId).update({
                   savedNotifications: savedNotifications,
@@ -129,7 +135,7 @@ export default function SendNotiScreen({route}) {
       <View style={styles.container}>
         <View style={styles.firstContainer}>
           <Text style={styles.welcomeText}>Welcome, {route.params.userData.owner}!!!</Text>
-          <Image style={{width: 54, height: 142, position: "absolute", right: "8%", top: "16%", zIndex: 5}} source={require("../../assets/penguin.png")} />
+          <Image style={{width: 54, height: 142, position: "absolute", right: "8%", top: "14%", zIndex: 5}} source={require("../../assets/penguin.png")} />
           <View style={styles.countTextContainer}>
           <Text style={styles.countText}>You sent </Text>
           <View style={styles.numberTextContainer}>
