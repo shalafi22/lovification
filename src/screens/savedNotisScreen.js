@@ -64,11 +64,11 @@ export default function SavedNotisScreen({route, navigation}) {
     }
 
     const handleSavePreset = () => {
-          if (route.params.userData.presets.length < 4) {
+          if (route.params.userData.presets.length < 6) {
             setIsActionModalVisible(false);
             setIsSavePresetModalVisible(true);
           } else {
-            alert("maximum 4 presets permitted")
+            alert("maximum 6 presets permitted")
           }
       
     }

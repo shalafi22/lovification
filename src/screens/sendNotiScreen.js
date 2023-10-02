@@ -250,8 +250,8 @@ const styles = StyleSheet.create({
     },
     thirdContainer: {
       width: "100%",
-      marginTop: 10,
-      flex: 0.3
+      flex: 0.3,
+      marginBottom: 20,
     },
     sendButton: {
       alignSelf: "center",

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { Text, View, StyleSheet, TouchableOpacity} from "react-native"
 
 const ButtonContainer = (props) => {
-    const [buttons, setButtons] = useState([{"title": "", "body": "", "color": "grey", "name": "XXX"},{"title": "", "body": "", "color": "grey", "name": "XXX"},{"title": "", "body": "", "color": "grey", "name": "XXX"},{"title": "", "body": "", "color": "grey", "name": "XXX"}])
+    const [buttons, setButtons] = useState([{"title": "", "body": "", "color": "grey", "name": "XXX"},{"title": "", "body": "", "color": "grey", "name": "XXX"},{"title": "", "body": "", "color": "grey", "name": "XXX"},{"title": "", "body": "", "color": "grey", "name": "XXX"}, {"title": "", "body": "", "color": "grey", "name": "XXX"}, {"title": "", "body": "", "color": "grey", "name": "XXX"}])
 
 
     const presetChangeNoti = (title, body) => {
@@ -12,7 +12,7 @@ const ButtonContainer = (props) => {
 
     useEffect(() => {
         let buttonsTemp = [...props.presets]
-        while (buttonsTemp.length < 4) {
+        while (buttonsTemp.length < 6) {
             buttonsTemp.push({"title": "", "body": "", "color": "grey", "name": "XXX"})
         }
         setButtons(buttonsTemp)
@@ -28,6 +28,10 @@ const ButtonContainer = (props) => {
                 <View style={styles.row}>
                     <TouchableOpacity onPress={() => {presetChangeNoti(buttons[2].title, buttons[2].body)}} style={[styles.button,{backgroundColor: buttons[2].color}]}><Text style={styles.buttonText}>{buttons[2].name}</Text></TouchableOpacity>
                     <TouchableOpacity onPress={() => {presetChangeNoti(buttons[3].title, buttons[3].body)}} style={[styles.button,{backgroundColor: buttons[3].color}]}><Text style={styles.buttonText}>{buttons[3].name}</Text></TouchableOpacity>
+                </View>
+                <View style={styles.row}>
+                    <TouchableOpacity onPress={() => {presetChangeNoti(buttons[4].title, buttons[4].body)}} style={[styles.button,{backgroundColor: buttons[4].color}]}><Text style={styles.buttonText}>{buttons[4].name}</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => {presetChangeNoti(buttons[5].title, buttons[5].body)}} style={[styles.button,{backgroundColor: buttons[5].color}]}><Text style={styles.buttonText}>{buttons[5].name}</Text></TouchableOpacity>
                 </View>
             </View>        
     )
